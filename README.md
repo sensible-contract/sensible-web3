@@ -1,5 +1,7 @@
 # Sensible-Web3
 
+[![npm version](https://img.shields.io/npm/v/@sensible-contract/sensible-web3.svg)](https://www.npmjs.com/package/@sensible-contract/sensible-web3)
+
 This is the Sensible Contract Javascript SDK.
 
 You need to connect a wallet to use this library.
@@ -22,26 +24,26 @@ yarn add @sensible-contract/sensible-web3
 
 ### In the Browser
 
-Use the prebuilt `dist/sensible-web3.min.js` , or
+Use the prebuilt `umd/sensible-web3.min.js` , or
 build using the repository:
 
 ```bash
 npm run build
 ```
 
-Then include `dist/sensible-web3.min.js` in your html file.
+Then include `umd/sensible-web3.min.js` in your html file.
 This will expose `Web3` on the window object.
 
 Or via jsDelivr CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@sensible-contract/sensible-web3@latest/dist/sensible-web3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@sensible-contract/sensible-web3@latest/umd/sensible-web3.min.js"></script>
 ```
 
 UNPKG:
 
 ```html
-<script src="https://unpkg.com/@sensible-contract/sensible-web3@latest/dist/sensible-web3.min.js"></script>
+<script src="https://unpkg.com/@sensible-contract/sensible-web3@latest/umd/sensible-web3.min.js"></script>
 ```
 
 ## Usage
