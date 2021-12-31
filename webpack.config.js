@@ -14,7 +14,6 @@ module.exports = {
     }),
     new webpack.IgnorePlugin({
       checkResource(resource) {
-        // "@ethereumjs/common/genesisStates" consists ~800KB static files which are no more needed
         return /(.*\/genesisStates\/.*\.json)/.test(resource);
       },
     }),

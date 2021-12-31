@@ -635,7 +635,7 @@ export class Sensible {
         token.genesis,
         address
       );
-      if (utxoCount <= 3) break;
+      if (utxoCount <= 20) break;
 
       let tokenUtxos = await this.provider.getTokenUtxos(
         token.codehash,
@@ -959,8 +959,78 @@ export class Sensible {
     }
   }
 
-  async getNftMetaData(provider: SensiblequeryProvider, { nft }: { nft: NFT }) {
-    let nftUtxo = await provider.getNftUtxoDetail(
+  private async parseMetaData(metaTxId: string, metaOutputIndex: number) {
+    let rawhex = await this.provider.getRawTx(metaTxId);
+    let tx = new bsv.Transaction(rawhex);
+    let jsondata = tx.outputs[metaOutputIndex].script.chunks[2].buf.toString();
+    let data = JSON.parse(jsondata);
+    return data;
+  }
+
+  async getNftCollectionList(
+    { cursor, size }: { cursor: number; size: number } = { cursor: 0, size: 10 }
+  ) {
+    let address = await this.wallet.getAddress();
+    let _res = await this.provider.getNftSummary(address, { cursor, size });
+
+    let results = [];
+    for (let i = 0; i < _res.length; i++) {
+      let summary = _res[i];
+      results.push({
+        codehash: summary.codehash,
+        genesis: summary.genesis,
+        sensibleId: summary.sensibleId,
+        count: summary.count + summary.pendingCount,
+      });
+    }
+    return results;
+  }
+
+  async getNftList(
+    { nft, withMetaData = true }: { nft: NFT; withMetaData?: boolean },
+    { cursor, size }: { cursor: number; size: number } = { cursor: 0, size: 10 }
+  ) {
+    let address = await this.wallet.getAddress();
+    let _res = await this.provider.getNftUtxoDatas(
+      nft.codehash,
+      nft.genesis,
+      address,
+      {
+        cursor,
+        size,
+      }
+    );
+    let waitingData = [];
+    for (let i = 0; i < _res.utxo.length; i++) {
+      let nftUtxo = _res.utxo[i];
+      if (withMetaData) {
+        waitingData[i] = this.parseMetaData(
+          nftUtxo.metaTxId,
+          nftUtxo.metaOutputIndex
+        );
+      }
+    }
+    let results = [];
+    for (let i = 0; i < _res.utxo.length; i++) {
+      let nftUtxo = _res.utxo[i];
+      if (withMetaData) {
+        let metaData = await waitingData[i];
+        results.push({
+          tokenIndex: nftUtxo.tokenIndex,
+          metaData,
+        });
+      } else {
+        results.push({
+          tokenIndex: nftUtxo.tokenIndex,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  async getNftMetaData(nft: NFT) {
+    let nftUtxo = await this.provider.getNftUtxoDetail(
       nft.codehash,
       nft.genesis,
       nft.tokenIndex
@@ -968,11 +1038,6 @@ export class Sensible {
     if (!nftUtxo) {
       throw new Error("no such nft");
     }
-    let rawhex = await provider.getRawTx(nftUtxo.metaTxId);
-    let tx = new bsv.Transaction(rawhex);
-    let jsondata =
-      tx.outputs[nftUtxo.metaOutputIndex].script.chunks[2].buf.toString();
-    let data = JSON.parse(jsondata);
-    return data;
+    return await this.parseMetaData(nftUtxo.metaTxId, nftUtxo.metaOutputIndex);
   }
 }
