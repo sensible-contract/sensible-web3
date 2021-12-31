@@ -200,7 +200,6 @@ export class Sensible {
       },
       rawTransaction: txComposer.getRawHex(),
     };
-    new bsv.Transaction.Output({});
   }
 
   async transferBsv(

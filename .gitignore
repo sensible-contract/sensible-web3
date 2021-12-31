@@ -3,7 +3,7 @@ node_modules
 dist/
 .DS_Store
 tests/
-docs
+docs/build
 lib
 es 
 umd
