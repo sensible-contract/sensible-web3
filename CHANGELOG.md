@@ -41,3 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Add NFT list query methods.
 * Add documents.
+
+## [0.2.0]
+
+### Changed
+
+* web3.sensible.transferBsv has changed to accept multi receivers.
+
+### Removed
+
+* web3.sensible.transferBsvArray is removed.

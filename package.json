@@ -1,6 +1,6 @@
 {
   "name": "@sensible-contract/sensible-web3",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Sensible Contract Javascript SDK",
   "main": "lib/index.js",
   "module": "es/index.js",

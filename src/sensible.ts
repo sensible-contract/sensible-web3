@@ -52,7 +52,7 @@ export type Token = {
   sensibleId?: string;
 };
 
-type Utxo = {
+export type Utxo = {
   txId: string;
   outputIndex: number;
   satoshis: number;
@@ -204,62 +204,6 @@ export class Sensible {
 
   async transferBsv(
     {
-      receiver,
-      utxos,
-    }: {
-      receiver: { address: string; amount: number };
-      utxos?: Utxo[];
-    },
-    options: TxOptions = DEFAULT_TX_OPTIONS
-  ) {
-    const txComposer = new TxComposer();
-    let address = await this.wallet.getAddress();
-    if (!utxos) utxos = await this.provider.getUtxos(address);
-    utxos.forEach((v, index) => {
-      txComposer.appendP2PKHInput({
-        address: new bsv.Address(v.address),
-        txId: v.txId,
-        outputIndex: v.outputIndex,
-        satoshis: v.satoshis,
-      });
-      txComposer.addInputInfo({
-        inputIndex: index,
-      });
-    });
-    txComposer.appendP2PKHOutput({
-      address: new bsv.Address(receiver.address),
-      satoshis: receiver.amount,
-    });
-    txComposer.appendChangeOutput(new bsv.Address(address));
-
-    if (options.onlyEstimateFee) {
-      const unlockSize = txComposer.getTx().inputs.length * P2PKH_UNLOCK_SIZE;
-      let fee = Math.ceil(
-        (txComposer.getTx().toBuffer().length + unlockSize) * txComposer.feeRate
-      );
-      return { fee };
-    }
-
-    let sigResults = await this.wallet.signTransaction(
-      txComposer.getRawHex(),
-      txComposer.getInputInfos()
-    );
-    txComposer.unlock(sigResults);
-
-    if (options.dumpTx) {
-      txComposer.dumpTx();
-    }
-
-    if (options.noBroadcast) {
-      return { rawtx: txComposer.getRawHex() };
-    } else {
-      let txid = await this.provider.broadcast(txComposer.getRawHex());
-      return { txid };
-    }
-  }
-
-  async transferBsvArray(
-    {
       receivers,
       utxos,
     }: {
@@ -274,6 +218,8 @@ export class Sensible {
     const txComposer = new TxComposer();
     let address = await this.wallet.getAddress();
     if (!utxos) utxos = await this.provider.getUtxos(address);
+    let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
+
     utxos.forEach((v, index) => {
       txComposer.appendP2PKHInput({
         address: new bsv.Address(v.address),
@@ -293,6 +239,14 @@ export class Sensible {
     });
 
     txComposer.appendChangeOutput(new bsv.Address(address));
+
+    const unlockSize = txComposer.getTx().inputs.length * P2PKH_UNLOCK_SIZE;
+    let fee = Math.ceil(
+      (txComposer.getTx().toBuffer().length + unlockSize) * txComposer.feeRate
+    );
+    if (options.onlyEstimateFee) return { fee };
+    if (balance < fee) throw "Insufficient Bsv Balance.";
+
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
       txComposer.getInputInfos()
@@ -315,6 +269,7 @@ export class Sensible {
     const txComposer = new TxComposer();
     let address = await this.wallet.getAddress();
     let utxos = await this.provider.getUtxos(address, { cursor: 0, size: 500 });
+    let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
     let amount = 0;
     utxos.forEach((v, index) => {
       txComposer.appendP2PKHInput({
@@ -337,8 +292,8 @@ export class Sensible {
     let fee = Math.ceil(
       (txComposer.getTx().toBuffer().length + unlockSize) * txComposer.feeRate
     );
-
     if (options.onlyEstimateFee) return { fee };
+    if (balance < fee) throw "Insufficient Bsv Balance.";
 
     txComposer.getOutput(outputIndex).satoshis -= fee;
 

@@ -67,88 +67,14 @@ Example
     
 ------------------------------------------------------------------------------
 
+
+
 transferBsv
 =====================
 
 .. code-block:: javascript
 
     web3.sensible.transferBsv(params[, options])
-
-----------
-Parameters
-----------
-
-* ``params`` - ``Object``:  
-   * ``receiver`` - :ref:`BsvReceiver<BsvReceiver>`: The receiver
-   * ``utxos`` - :ref:`Utxo[]<Utxo>`: (Optional) Specify bsv utxos
-    
-* ``options`` - :ref:`TxOptions<TxOptions>`: The transaction options.
-
--------
-Returns
--------
-
-``Promise`` returns `Object`:
-    * ``fee`` - ``number``: The estimateFee. When options.onlyEstimateFee==true, this is the only returns.
-    * ``rawtx`` - ``string``: The raw tx. When options.noBroadcast==true, this is the only returns.
-    * ``txid`` - ``string``: The txid. 
-
--------
-Example
--------
-
-.. code-block:: javascript
-
-    const web3 = new Web3(window.sensilet);
-    let _res1 = await web3.sensible.transferBsv(
-        {
-            receiver: {
-                address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
-                amount: 1000,
-            },
-        },
-        {
-            onlyEstimateFee: true,
-        }
-    )
-    console.log(_res1);
-    > { fee: 114 }
-
-    let _res2 = await web3.sensible.transferBsv(
-        {
-            receiver: {
-                address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
-                amount: 1000,
-            },
-        },
-        {
-            noBroadcast: true,
-        }
-    )
-    console.log(_res2);
-    > {
-        rawtx: '0100000001f2917dec17dd38a1cd2ecce3acfcd31ad40c4d0cd1c1a87f8058540f3da6a176000000006b483045022100d7b7cfccff00234896b36e72e77c613df3d903121b31f4c3b939ef624a6a656e022043319297ad3b8c4b5e65dea3bd5653f1d6c178d9903646e046b42ee23ed1b901412103cbaedc26f03fd3ba02fc936f338e980c9e2172c5e23128877ed46827e935296fffffffff02e8030000000000001976a9149acddefa2781a7d66e3a6da3deb3df095857464b88ac47820100000000001976a9149acddefa2781a7d66e3a6da3deb3df095857464b88ac00000000'
-    }
-
-    let _res3 = await web3.sensible.transferBsv({
-        receiver: {
-            address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
-            amount: 1000,
-        },
-    });
-    console.log(_res3);
-    >{
-        txid: '67010801a97abdefc5ae85a54fe7b2fff3aef68317a7faceb84890c3192ddaa6'
-    }
-    
-------------------------------------------------------------------------------
-
-transferBsvArray
-=====================
-
-.. code-block:: javascript
-
-    web3.sensible.transferBsvArray(params[, options])
 
 ----------
 Parameters
@@ -174,25 +100,63 @@ Example
 -------
 
 .. code-block:: javascript
-
+    
     const web3 = new Web3(window.sensilet);
-    let _res = await web3.sensible.transferBsvArray({
+    let _res1 = await web3.sensible.transferBsv(
+      {
         receivers: [
-        {
+          {
             address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
             amount: 1000,
-        },
-        {
+          },
+          {
             address: "1J1YJZwdGbnnEHV3bSbz24VYL3QyVGnxgg",
             amount: 200,
-        },
+          },
         ],
-    });
-    console..log(_res)
+      },
+      { onlyEstimateFee: true }
+    );
+    console.log(_res1);
+    > { fee: 131 }
+
+    let _res2 = await web3.sensible.transferBsv(
+      {
+        receivers: [
+          {
+            address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
+            amount: 1000,
+          },
+          {
+            address: "1J1YJZwdGbnnEHV3bSbz24VYL3QyVGnxgg",
+            amount: 200,
+          },
+        ],
+      },
+      { noBroadcast: true }
+    );
+    console.log(_res2);
     > {
-        txid: '0c2eb65eb82adbf1b5fa42b56ff8823f7a12b165e6e3e41d1e8928ce5e224634'
+        rawtx: '0100000001d19776eea58041900b2a20086d93614d1e9d842764216b3bb52f929f071456a7020000006a4730440220642d625911c2d81517d148828fe7ed58325714372d950d11699977177a93766802202dd9b4d768c62092925bcede67f4ec585466be294d559549c9d923b8e2a8c53d412103cbaedc26f03fd3ba02fc936f338e980c9e2172c5e23128877ed46827e935296fffffffff03e8030000000000001976a9149acddefa2781a7d66e3a6da3deb3df095857464b88acc8000000000000001976a914ba9444c7483a62394166d406164317c1c722e4a488ac132c0000000000001976a9149acddefa2781a7d66e3a6da3deb3df095857464b88ac00000000'
     }
-    
+
+    let _res3 = await web3.sensible.transferBsv({
+      receivers: [
+        {
+          address: "1F7XgiBcErvnsh54YgwQbhG7Mxp8Mig2Vj",
+          amount: 1000,
+        },
+        {
+          address: "1J1YJZwdGbnnEHV3bSbz24VYL3QyVGnxgg",
+          amount: 200,
+        },
+      ],
+    });
+    console.log(_res3);
+    >{
+        txid: 'f8b4ce47530c97ae2e4666a7823d3911ac5f4c7792d0024b5179b498fcf3f8d2'
+    }
+
 ------------------------------------------------------------------------------
 
 
