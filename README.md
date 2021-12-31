@@ -91,5 +91,5 @@ npm run build
 npm run test
 ```
 
-[docs]: https://sensible-web3js.readthedocs.io/en/1.0/
+[docs]: https://sensible-web3.readthedocs.io
 [demo]: https://demo.sensilet.com
