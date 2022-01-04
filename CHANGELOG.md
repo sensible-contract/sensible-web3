@@ -57,3 +57,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Upgrade @sensible-contract/providers from 1.0.3 to 1.0.4 (Fix a bug that will cause multiple requests)
+
+## [0.2.2]
+
+### Fixed
+
+* Upgrade @sensible-contract/providers from 1.0.4 to 1.0.5 (Remove useless log)

@@ -1,6 +1,6 @@
 {
   "name": "@sensible-contract/sensible-web3",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Sensible Contract Javascript SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@sensible-contract/abstract-wallet": "^1.0.0",
     "@sensible-contract/nft-js": "^1.1.2",
-    "@sensible-contract/providers": "^1.0.4",
+    "@sensible-contract/providers": "^1.0.5",
     "@sensible-contract/rabin-signer-list": "^1.0.1",
     "@sensible-contract/token-js": "^1.1.2",
     "@sensible-contract/tx-composer": "^1.0.0"
