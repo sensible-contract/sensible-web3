@@ -51,3 +51,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 * web3.sensible.transferBsvArray is removed.
+
+## [0.2.1]
+
+### Fixed
+
+* Upgrade @sensible-contract/providers from 1.0.3 to 1.0.4 (Fix a bug that will cause multiple requests)
