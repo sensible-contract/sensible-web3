@@ -12,7 +12,7 @@ export default class Web3 {
 
   static readonly utils = utils;
   static readonly version: string = version;
-  modules: Modules = {
+  static modules: Modules = {
     Sensible,
   };
 

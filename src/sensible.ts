@@ -206,12 +206,14 @@ export class Sensible {
     {
       receivers,
       utxos,
+      opreturnData,
     }: {
       receivers: {
         address: string;
         amount: number;
       }[];
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
@@ -237,6 +239,10 @@ export class Sensible {
         satoshis: v.amount,
       });
     });
+
+    if (opreturnData) {
+      txComposer.appendOpReturnOutput(opreturnData);
+    }
 
     txComposer.appendChangeOutput(new bsv.Address(address));
 
@@ -323,12 +329,14 @@ export class Sensible {
       tokenSymbol,
       decimalNum,
       utxos,
+      opreturnData,
     }: {
       tokenSigner?: TokenSigner;
       tokenName: string;
       tokenSymbol: string;
       decimalNum: number;
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
@@ -337,7 +345,10 @@ export class Sensible {
     let publicKey = await this.wallet.getPublicKey();
     if (!utxos) utxos = await this.provider.getUtxos(address);
     let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
-    let fee = createTokenGenesisTx.estimateFee({ utxoMaxCount: utxos.length });
+    let fee = createTokenGenesisTx.estimateFee({
+      utxoMaxCount: utxos.length,
+      opreturnData,
+    });
     if (options.onlyEstimateFee) return { fee };
     if (balance < fee) throw "Insufficient Bsv Balance.";
     let { txComposer } = await createTokenGenesisTx({
@@ -347,6 +358,7 @@ export class Sensible {
       utxos,
       genesisPublicKey: publicKey,
       decimalNum,
+      opreturnData,
     });
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
@@ -374,12 +386,14 @@ export class Sensible {
       receiverAddress,
       allowIncreaseIssues = false,
       utxos,
+      opreturnData,
     }: {
       token: Token;
       tokenAmount: string;
       receiverAddress?: string;
       allowIncreaseIssues?: boolean;
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
@@ -398,6 +412,7 @@ export class Sensible {
       genesisInput,
       allowIncreaseIssues,
       utxoMaxCount: utxos.length,
+      opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
     if (balance < fee) throw "Insufficient Bsv Balance.";
@@ -414,6 +429,7 @@ export class Sensible {
       allowIncreaseIssues,
       receiverAddress,
       tokenAmount,
+      opreturnData,
     });
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
@@ -439,6 +455,7 @@ export class Sensible {
       receivers,
       utxos,
       autoMerge = true,
+      opreturnData,
     }: {
       token: Token;
       receivers: {
@@ -447,11 +464,10 @@ export class Sensible {
       }[];
       utxos?: Utxo[];
       autoMerge?: boolean;
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
-    let opreturnData: any = null;
-
     let address = await this.wallet.getAddress();
 
     if (autoMerge) {
@@ -708,10 +724,12 @@ export class Sensible {
       nftSigner,
       totalSupply,
       utxos,
+      opreturnData,
     }: {
       nftSigner?: NftSigner;
       totalSupply: string;
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
@@ -723,6 +741,7 @@ export class Sensible {
     let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
     let fee = createNftGenesisTx.estimateFee({
       utxoMaxCount: utxos.length,
+      opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
     if (balance < fee) throw "Insufficient Bsv Balance.";
@@ -732,6 +751,7 @@ export class Sensible {
       utxos,
       genesisPublicKey: publicKey,
       totalSupply,
+      opreturnData,
     });
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
@@ -758,11 +778,13 @@ export class Sensible {
       receiverAddress,
       metaData,
       utxos,
+      opreturnData,
     }: {
       nft: NFT;
       metaData: NftMetaData;
       receiverAddress?: string;
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
@@ -785,7 +807,11 @@ export class Sensible {
       metaData,
       utxoMaxCount: utxos.length,
     });
-    let fee2 = createNftMintTx.estimateFee({ genesisInput, utxoMaxCount: 1 });
+    let fee2 = createNftMintTx.estimateFee({
+      genesisInput,
+      utxoMaxCount: 1,
+      opreturnData,
+    });
     let fee = fee1 + fee2;
     if (options.onlyEstimateFee) return { fee };
     if (balance < fee) throw "Insufficient Bsv Balance.";
@@ -819,6 +845,7 @@ export class Sensible {
       receiverAddress,
       metaTxId: nftMetaDataRet.txComposer.getTxId(),
       metaOutputIndex: 0,
+      opreturnData,
     });
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
@@ -848,14 +875,15 @@ export class Sensible {
       nft,
       receiverAddress,
       utxos,
+      opreturnData,
     }: {
       nft: NFT;
       receiverAddress?: string;
       utxos?: Utxo[];
+      opreturnData?: any;
     },
     options: TxOptions = DEFAULT_TX_OPTIONS
   ) {
-    let opreturnData = null;
     let address = await this.wallet.getAddress();
     let publicKey = await this.wallet.getPublicKey();
     if (!receiverAddress) receiverAddress = address;
