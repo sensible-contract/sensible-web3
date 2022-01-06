@@ -39,7 +39,7 @@
   "dependencies": {
     "@sensible-contract/abstract-wallet": "^1.0.0",
     "@sensible-contract/nft-js": "^1.1.2",
-    "@sensible-contract/providers": "^1.0.5",
+    "@sensible-contract/providers": "^1.0.7",
     "@sensible-contract/rabin-signer-list": "^1.0.1",
     "@sensible-contract/token-js": "^1.1.2",
     "@sensible-contract/tx-composer": "^1.0.0"

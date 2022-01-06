@@ -1,3 +1,4 @@
+import { Provider } from "@sensible-contract/abstract-provider";
 import { Wallet } from "@sensible-contract/abstract-wallet";
 import * as bsv from "@sensible-contract/bsv";
 import { BN } from "@sensible-contract/bsv";
@@ -139,8 +140,8 @@ export async function getTokenSigner(
 
 export class Sensible {
   public wallet: Wallet;
-  public provider: SensiblequeryProvider;
-  constructor(wallet?: Wallet, provider?: SensiblequeryProvider) {
+  public provider: Provider;
+  constructor(wallet?: Wallet, provider?: Provider) {
     if (!provider) {
       provider = new SensiblequeryProvider();
     }
@@ -705,7 +706,7 @@ export class Sensible {
   ) {
     let address = await this.wallet.getAddress();
     let _res = await this.provider.getTokenList(address, { cursor, size });
-    return _res.list.map((v) => {
+    return _res.map((v) => {
       let tokenBalance = toTokenBalance(v.balance, v.pendingBalance, v.decimal);
       return {
         codehash: v.codehash,
@@ -889,17 +890,11 @@ export class Sensible {
     if (!receiverAddress) receiverAddress = address;
     if (!utxos) utxos = await this.provider.getUtxos(address);
 
-    let nftUtxoDetail = await this.provider.getNftUtxoDetail(
+    let nftUtxo = await this.provider.getNftUtxo(
       nft.codehash,
       nft.genesis,
       nft.tokenIndex
     );
-    let nftUtxo = {
-      txId: nftUtxoDetail.txid,
-      outputIndex: nftUtxoDetail.vout,
-      tokenAddress: nftUtxoDetail.address,
-      tokenIndex: nftUtxoDetail.tokenIndex,
-    };
     let nftInput = await getNftInput(this.provider, {
       codehash: nft.codehash,
       genesis: nft.genesis,
@@ -953,7 +948,10 @@ export class Sensible {
     { cursor, size }: { cursor: number; size: number } = { cursor: 0, size: 10 }
   ) {
     let address = await this.wallet.getAddress();
-    let _res = await this.provider.getNftSummary(address, { cursor, size });
+    let _res = await this.provider.getNftCollectionList(address, {
+      cursor,
+      size,
+    });
 
     let results = [];
     for (let i = 0; i < _res.length; i++) {
@@ -962,7 +960,7 @@ export class Sensible {
         codehash: summary.codehash,
         genesis: summary.genesis,
         sensibleId: summary.sensibleId,
-        count: summary.count + summary.pendingCount,
+        count: summary.count,
       });
     }
     return results;
@@ -973,7 +971,7 @@ export class Sensible {
     { cursor, size }: { cursor: number; size: number } = { cursor: 0, size: 10 }
   ) {
     let address = await this.wallet.getAddress();
-    let _res = await this.provider.getNftUtxoDatas(
+    let _res = await this.provider.getNftUtxos(
       nft.codehash,
       nft.genesis,
       address,
@@ -983,8 +981,8 @@ export class Sensible {
       }
     );
     let waitingData = [];
-    for (let i = 0; i < _res.utxo.length; i++) {
-      let nftUtxo = _res.utxo[i];
+    for (let i = 0; i < _res.length; i++) {
+      let nftUtxo = _res[i];
       if (withMetaData) {
         waitingData[i] = this.parseMetaData(
           nftUtxo.metaTxId,
@@ -993,8 +991,8 @@ export class Sensible {
       }
     }
     let results = [];
-    for (let i = 0; i < _res.utxo.length; i++) {
-      let nftUtxo = _res.utxo[i];
+    for (let i = 0; i < _res.length; i++) {
+      let nftUtxo = _res[i];
       if (withMetaData) {
         let metaData = await waitingData[i];
         results.push({
@@ -1012,7 +1010,7 @@ export class Sensible {
   }
 
   async getNftMetaData(nft: NFT) {
-    let nftUtxo = await this.provider.getNftUtxoDetail(
+    let nftUtxo = await this.provider.getNftUtxo(
       nft.codehash,
       nft.genesis,
       nft.tokenIndex

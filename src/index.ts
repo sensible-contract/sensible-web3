@@ -1,10 +1,15 @@
+import { Provider } from "@sensible-contract/abstract-provider";
 import { Wallet } from "@sensible-contract/abstract-wallet";
-import { SensiblequeryProvider } from "@sensible-contract/providers";
+import {
+  MetaSVProvider,
+  SensiblequeryProvider,
+  WhatsOnChainProvider,
+} from "@sensible-contract/providers";
 import { Sensible } from "./sensible";
 import * as utils from "./utils";
 let version = require("../package.json").version;
 export default class Web3 {
-  provider: SensiblequeryProvider;
+  provider: Provider;
   wallet: Wallet;
   sensible: Sensible;
   version: string = version;
@@ -12,11 +17,17 @@ export default class Web3 {
 
   static readonly utils = utils;
   static readonly version: string = version;
-  static modules: Modules = {
+  static modules = {
     Sensible,
   };
 
-  constructor(wallet: Wallet, provider?: SensiblequeryProvider) {
+  static providers = {
+    SensiblequeryProvider,
+    WhatsOnChainProvider,
+    MetaSVProvider,
+  };
+
+  constructor(wallet: Wallet, provider?: Provider) {
     this.wallet = wallet;
     if (!provider) provider = new SensiblequeryProvider();
     this.provider = provider;
@@ -24,12 +35,8 @@ export default class Web3 {
     this.sensible = new Sensible(wallet, provider);
   }
 
-  setProvider(provider: SensiblequeryProvider) {
+  setProvider(provider: Provider) {
     this.provider = provider;
     this.sensible.provider = provider;
   }
-}
-
-export interface Modules {
-  Sensible: new (wallet: Wallet, provider?: SensiblequeryProvider) => Sensible;
 }
