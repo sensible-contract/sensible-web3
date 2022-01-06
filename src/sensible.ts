@@ -252,7 +252,7 @@ export class Sensible {
       (txComposer.getTx().toBuffer().length + unlockSize) * txComposer.feeRate
     );
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let sigResults = await this.wallet.signTransaction(
       txComposer.getRawHex(),
@@ -300,7 +300,7 @@ export class Sensible {
       (txComposer.getTx().toBuffer().length + unlockSize) * txComposer.feeRate
     );
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     txComposer.getOutput(outputIndex).satoshis -= fee;
 
@@ -351,7 +351,7 @@ export class Sensible {
       opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
     let { txComposer } = await createTokenGenesisTx({
       tokenSigner,
       tokenName,
@@ -416,7 +416,7 @@ export class Sensible {
       opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let tokenSigner = await getTokenSigner(
       genesisInput.rabinPubKeyHashArrayHash
@@ -489,6 +489,10 @@ export class Sensible {
       genesis: token.genesis,
     });
 
+    if (tokenInputs.length == 0) {
+      throw new Error("Insufficient Token Balance.");
+    }
+
     let tokenOutputs = receivers;
     let changeAmount = tokenInputs
       .reduce((pre, cur) => pre.add(cur.tokenAmount), BN.Zero)
@@ -525,7 +529,7 @@ export class Sensible {
     let fee = fee1 + fee2;
     if (options.onlyEstimateFee) return { fee };
     let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let tokenSigner = await getTokenSigner(
       tokenInputs[0].rabinPubKeyHashArrayHash
@@ -745,7 +749,7 @@ export class Sensible {
       opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let { txComposer } = await createNftGenesisTx({
       nftSigner,
@@ -815,7 +819,7 @@ export class Sensible {
     });
     let fee = fee1 + fee2;
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let nftSigner = await getNftSigner(genesisInput.rabinPubKeyHashArrayHash);
 
@@ -900,6 +904,9 @@ export class Sensible {
       genesis: nft.genesis,
       nftUtxo,
     });
+    if (!nftInput) {
+      throw new Error("Non-existent NFT");
+    }
 
     let balance = utxos.reduce((pre, cur) => cur.satoshis + pre, 0);
     let fee = createNftTransferTx.estimateFee({
@@ -908,7 +915,7 @@ export class Sensible {
       opreturnData,
     });
     if (options.onlyEstimateFee) return { fee };
-    if (balance < fee) throw "Insufficient Bsv Balance.";
+    if (balance < fee) throw new Error("Insufficient Bsv Balance.");
 
     let nftSigner = await getNftSigner(nftInput.rabinPubKeyHashArrayHash);
 
