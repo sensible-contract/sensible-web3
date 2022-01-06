@@ -53,6 +53,57 @@ Example
 
 ------------------------------------------------------------------------------
 
+modules
+============
+
+Will return an object with classes of all major modules, to be able to instantiate them manually.
+
+-------
+Returns
+-------
+
+``Object``: A list of module constructors:
+     - ``Sensible`` - ``Constructor``: The Sensible module for interacting with sensible contracts.  (:ref:`web3.sensible <sensible>`).
+
+-------
+Example
+-------
+
+.. code-block:: javascript
+
+    Web3.modules
+    > {
+        Sensible: Sensible(wallet, provider),
+    }
+
+------------------------------------------------------------------------------
+
+providers
+============
+
+Contains the current available providers.
+
+-------
+Returns
+-------
+
+``Object``: with the following providers:
+    - ``SensiblequeryProvider`` - ``Constructor``: The SensibleQuery provider.(Default provider) 
+    - ``MetaSVProvider`` - ``Constructor``: MetaSV provider, does not support NFT.  
+    - ``WhatsOnChainProvider`` - ``Constructor``: WhatsOnChain provider, does not support Token and NFT.  
+
+-------
+Example
+-------
+
+.. code-block:: javascript
+
+    import Web3 from "@sensible-contract/sensible-web3";
+    let provider = new Web3.providers.SensiblequeryProvider();
+    let web3 = new Web3(sensilet,provider);
+
+------------------------------------------------------------------------------
+
 version
 ============
 
