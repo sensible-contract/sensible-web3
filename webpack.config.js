@@ -71,8 +71,9 @@ module.exports = {
   output: {
     filename: "[name].min.js",
     path: path.resolve(__dirname, "umd"),
-    library: "sensible-web3",
+    library: "Web3",
     libraryTarget: "umd",
+    libraryExport: "default",
   },
   performance: {
     maxAssetSize: 4000000,

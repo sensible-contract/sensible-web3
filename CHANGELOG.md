@@ -63,3 +63,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Upgrade @sensible-contract/providers from 1.0.4 to 1.0.5 (Remove useless log)
+
+## [0.2.3]
+
+### Changed
+
+* Added support for OP_RETURN in sensible module.
+
+## [0.2.4]
+
+### Added
+
+* Upgrade providers and expose them.
+
+## [0.2.5]
+
+### Fixed 
+
+* Export the correct object in UMD mode.
