@@ -1,11 +1,11 @@
 {
   "name": "@sensible-contract/sensible-web3",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Sensible Contract Javascript SDK",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "umd": "umd/sensible.min.js",
-  "browser": "umd/sensible.min.js",
+  "umd": "umd/sensible-web3.min.js",
+  "browser": "umd/sensible-web3.min.js",
   "types": "lib/index.d.ts",
   "engines": {
     "node": ">=12.0.0"
